@@ -1,0 +1,130 @@
+Script started on Thu 03 Oct 2019 10:40:25 PM MST
+[?1034hsh-4.2$ cat HW2_V4.c
+/*
+*  Name: Nicole Lord
+*  Date: September 26, 2019
+*  Assignment Name: Homework #02
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct queuedItem {
+    char aChar;
+    struct queuedItem *next;
+} QUEUED_ITEM;
+
+void insert(QUEUED_ITEM **ptrQ, QUEUED_ITEM *newGuy) {
+        if (*ptrQ == NULL) {
+            *ptrQ = newGuy;
+            (*ptrQ)->next = *ptrQ;
+        } else {
+            newGuy->next = (*ptrQ)->next;
+            (*ptrQ)->next = newGuy;
+            *ptrQ = newGuy;
+        }
+}
+
+void delete (QUEUED_ITEM **ptrQ2) {
+    QUEUED_ITEM *temp;
+    if (*ptrQ2 == NULL) {
+        printf("\nNothing to remove; queue is empty.\n");
+    } else if ((*ptrQ2)->next == (*ptrQ2)) {
+        printf("\nThe character removed was an " "%c" ".\n", (*ptrQ2)->next->aChar);
+        free(*ptrQ2);
+        *ptrQ2 = NULL;
+    } else {
+        temp = (*ptrQ2)->next;
+        (*ptrQ2)->next = (*ptrQ2)->next->next;
+        printf("\nThe character removed was an ""%c"".\n", temp->aChar);
+        free(temp);
+    }
+}
+
+int main() {
+    QUEUED_ITEM *Q = NULL, *newItem;
+    newItem = malloc(sizeof(QUEUED_ITEM));
+    (*Q);
+    char userInput;
+    printf("\nEnter i to insert a new element, r to remove an element, q to quit: ");
+    scanf(" %c", &(userInput));
+    while(userInput != 'q') {
+        if (userInput == 'i') {
+            newItem = malloc(sizeof(QUEUED_ITEM));
+            printf("\nEnter character to be enqueued (inserted): ");
+            scanf(" %c", &(newItem->aChar));
+            insert(&Q, newItem);
+        } else if (userInput == 'r') {
+            delete(&Q);
+        } 
+        printf("\nEnter i to insert a new element, r to remove an element, q to quit: ");
+        scanf(" %c", &(userInput));
+    }   
+}
+
+
+
+sh-4.2$ gcc HW2_V4.c
+sh-4.2$ a.out
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+Nothing to remove; queue is empty.
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): A
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): B
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): C
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an A.
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an B.
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an C.
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): D
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): E
+
+Enter i to insert a new element, r to remove an element, q to quit: i
+
+Enter character to be enqueued (inserted): F
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an D.
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an E.
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+The character removed was an F.
+
+Enter i to insert a new element, r to remove an element, q to quit: r
+
+Nothing to remove; queue is empty.
+
+Enter i to insert a new element, r to remove an element, q to quit: q
+sh-4.2$ exit
+exit
+
+Script done on Thu 03 Oct 2019 10:41:22 PM MST

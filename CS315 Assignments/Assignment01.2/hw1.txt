@@ -1,0 +1,156 @@
+Script started on Thu 12 Sep 2019 05:51:03 PM MST
+[?1034hsh-4.2$ cat assignment01.c
+/*
+*  Name: Nicole Lord
+*  Date: September 11, 2019
+*  Assignment Name: Homework #01
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+/*The structure for the ordered list*/
+
+typedef struct listItem
+{
+    int anInteger;
+    struct listItem *next;
+}LIST_ITEM;
+
+void traversing(LIST_ITEM *trvPtr, LIST_ITEM *start);
+void sorting(LIST_ITEM *trvPtr, LIST_ITEM *start, LIST_ITEM *temp);
+void deletion(LIST_ITEM *lead, LIST_ITEM *trail, LIST_ITEM *start, int valueToBeDeleted);
+
+int main(){
+    LIST_ITEM *start = NULL, *temp, *lead, *trail;
+    LIST_ITEM *trvPtr = start;
+    int valueToBeDeleted;
+    temp = malloc(sizeof(LIST_ITEM));
+    start = malloc(sizeof(LIST_ITEM));
+    lead = start->next;
+    trail = start;
+    printf("  Enter an integer to be inserted (0 terminates list construction): ");    /*To get the first non-zero integer*/
+    scanf("%d", &(start->anInteger));
+    printf("    The list is: %d\n", start->anInteger);
+    temp = start;
+    while((temp->anInteger) != 0){   /*To continue getting non-zero integers for the list*/
+        temp = malloc(sizeof(LIST_ITEM));
+        printf("\n  Enter an integer to be inserted (0 terminates list construction): ");
+        scanf("%d", &(temp->anInteger));
+        if(temp->anInteger != 0){
+            sorting(trvPtr, start, temp);
+            if(temp->anInteger < start->anInteger){ /*Making sure sorting is not taking the malloc version of start*/
+                start = temp;                         
+            }
+        }
+        trvPtr = start->next;
+        traversing(trvPtr, start);
+        printf("\n");
+    }
+    printf("\nOK, construction of the list is done; let's start deletions.\n");
+    printf("\n  Enter a value to be deleted (0 terminates the program): ");     /*Asking for the first nonzero value to be deleted*/
+    scanf("%d", &valueToBeDeleted);
+    while (valueToBeDeleted != 0) {
+        deletion(lead, trail, start, valueToBeDeleted);
+        if (start->anInteger == valueToBeDeleted) {
+            temp = start;             /*Setting temp to start so we can free that value later on*/
+            start = start->next;      /*Setting start to its next value if it is the value to be deleted*/
+            free(temp);               /*Clearing the original start value*/
+        }
+        trvPtr = start->next;
+        traversing(trvPtr, start);
+        printf("\n\n  Enter a value to be deleted (0 terminates the program): ");
+        scanf("%d", &valueToBeDeleted);
+    }
+    printf("\n  Goodbye.\n");
+}
+
+void sorting(LIST_ITEM *trvPtr, LIST_ITEM *start, LIST_ITEM *temp) {
+    if(temp->anInteger < start->anInteger){
+        temp->next = start;
+        start = temp;
+    } else if(temp->anInteger > start->anInteger){
+        trvPtr = start;
+        while((trvPtr->next != NULL) && (temp->anInteger > trvPtr->next->anInteger)){
+            trvPtr = trvPtr->next;
+        }
+        if((trvPtr->next == NULL) || (temp->anInteger != trvPtr->next->anInteger)) {
+            temp->next = trvPtr->next;
+            trvPtr->next = temp;
+        }
+    }
+}
+
+void traversing(LIST_ITEM *trvPtr, LIST_ITEM *start) {
+    printf("    The list is: %d", start->anInteger);
+    while (trvPtr != NULL) {
+        if(trvPtr->anInteger != 0){
+            printf("->%d", trvPtr->anInteger);
+        }
+        trvPtr = trvPtr->next;
+    }
+}
+
+void deletion(LIST_ITEM *lead, LIST_ITEM *trail, LIST_ITEM *start, int valueToBeDeleted){
+    lead = start;
+    trail = start;
+    if(start == NULL) {
+        printf("The list is empty.");
+    } else if(valueToBeDeleted == start->anInteger) {
+        start = start->next;
+    } else {
+        lead = lead->next;
+        while((lead != NULL) && (lead->anInteger != valueToBeDeleted)) {
+            lead = lead->next;
+            trail = trail->next;
+        }
+        if (lead == NULL) {
+            printf("    %d is not in the list\n", valueToBeDeleted);
+        } else if (lead->anInteger == valueToBeDeleted) {
+            trail->next = lead->next;
+            free(lead);
+        }
+    }
+}
+sh-4.2$ gcc assignment01.c
+sh-4.2$ a.out
+  Enter an integer to be inserted (0 terminates list construction): 3
+    The list is: 3
+
+  Enter an integer to be inserted (0 terminates list construction): 5
+    The list is: 3->5
+
+  Enter an integer to be inserted (0 terminates list construction): 9
+    The list is: 3->5->9
+
+  Enter an integer to be inserted (0 terminates list construction): 7
+    The list is: 3->5->7->9
+
+  Enter an integer to be inserted (0 terminates list construction): 1
+    The list is: 1->3->5->7->9
+
+  Enter an integer to be inserted (0 terminates list construction): 0
+    The list is: 1->3->5->7->9
+
+OK, construction of the list is done; let's start deletions.
+
+  Enter a value to be deleted (0 terminates the program): 4
+    4 is not in the list
+    The list is: 1->3->5->7->9
+
+  Enter a value to be deleted (0 terminates the program): 1
+    The list is: 3->5->7->9
+
+  Enter a value to be deleted (0 terminates the program): 9
+    The list is: 3->5->7
+
+  Enter a value to be deleted (0 terminates the program): 5
+    The list is: 3->7
+
+  Enter a value to be deleted (0 terminates the program): 0
+
+  Goodbye.
+sh-4.2$ exit
+exit
+
+Script done on Thu 12 Sep 2019 05:51:40 PM MST

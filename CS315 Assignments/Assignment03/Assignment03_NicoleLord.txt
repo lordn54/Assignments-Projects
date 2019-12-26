@@ -1,0 +1,265 @@
+Script started on Sat 02 Nov 2019 10:17:09 AM MST
+[?1034hsh-4.2$ cat -n Assignment03_NL.c
+     1	/*
+     2	*  Name: Nicole Lord
+     3	*  Date: November 2, 2019
+     4	*  Assignment Name: Homework #03
+     5	*/
+     6	
+     7	#include <stdio.h>
+     8	#include <stdlib.h>
+     9	
+    10	typedef struct tree_node {
+    11	    char node;
+    12	    char data[11];
+    13	    struct tree_node *left;
+    14	    struct tree_node *right;
+    15	}TREE_NODE;
+    16	
+    17	typedef struct stackItem{
+    18	    struct stackItem *next;
+    19	    TREE_NODE *treeNode;
+    20	}STACKITEM;
+    21	
+    22	int stackEmpty(STACKITEM *top) {
+    23	    int status;
+    24	    if (top == NULL) {
+    25	        status = 1;
+    26	    } else {
+    27	        status = 0;
+    28	    }
+    29	    return status;
+    30	}
+    31	
+    32	void push(STACKITEM **top, TREE_NODE *tNode) {
+    33	    STACKITEM *newItem = NULL;
+    34	    newItem = malloc(sizeof(STACKITEM));
+    35	    newItem->treeNode = tNode;
+    36	    newItem->next = *top;
+    37	    *top = newItem;
+    38	    (*top)->next = newItem->next;
+    39	}
+    40	
+    41	TREE_NODE *pop(STACKITEM **top) {
+    42	    STACKITEM *temp = NULL;
+    43	    TREE_NODE *returned = NULL;
+    44	    temp = *top;
+    45	    returned = (*top)->treeNode;
+    46	    *top = temp->next;
+    47	    free(temp);
+    48	    return returned;
+    49	}
+    50	
+    51	void visit(TREE_NODE *root) {
+    52	    printf("%c", root->node);
+    53	}
+    54	
+    55	void preOrderTraversal(TREE_NODE *root) {
+    56	    STACKITEM *top = NULL;
+    57	    int done = 0;  
+    58	    while ( ! done ) {
+    59	        while (root != NULL) {
+    60	            visit(root);
+    61	            if (root->left != NULL ) {
+    62	                push(&top, root);
+    63	                root = root->left;
+    64	            } else {
+    65	                root = root->right;
+    66	            }
+    67	        }
+    68	        if ( stackEmpty(top)) {
+    69	            done++;  
+    70	        } else {
+    71	            root = pop(&top);
+    72	            root = root->right;
+    73	        }         
+    74	    }
+    75	}
+    76	
+    77	void inOrderTraversal(TREE_NODE *root) {
+    78	    STACKITEM *top = NULL;
+    79	    int done = 0;  
+    80	    while ( ! done ) {
+    81	        while (root != NULL) {
+    82	            if (root->left != NULL ) {
+    83	                push(&top, root);
+    84	                root = root->left;
+    85	            } else {
+    86	                visit(root);
+    87	                root = root->right;
+    88	            }
+    89	        }
+    90	        if (stackEmpty(top)) {
+    91	            done++;  
+    92	        } else {
+    93	            root = pop(&top);
+    94	            visit(root);
+    95	            root = root->right;
+    96	        }         
+    97	    }
+    98	}
+    99	
+   100	void insertionInTree(TREE_NODE *root) {
+   101	    TREE_NODE *newNode = NULL, *trvPtrLead, *trvPtrTail;
+   102	    newNode = malloc(sizeof(TREE_NODE));
+   103	    trvPtrLead = root;
+   104	    trvPtrTail = root;
+   105	    printf("\nEnter new node's key value: ");
+   106	    scanf(" %c", &(newNode->node));
+   107	    printf("\nEnter string of up to 10 characters for '%c' data: ", newNode->node);
+   108	    scanf("%s", newNode->data);
+   109	    printf("\n");
+   110	    while (trvPtrLead != NULL) {
+   111	        trvPtrTail = trvPtrLead;
+   112	        if ((newNode->node) < (trvPtrLead->node)) {
+   113	            trvPtrLead = trvPtrLead->left;
+   114	        } else if ((newNode->node) > (trvPtrLead->node)) {
+   115	            trvPtrLead = trvPtrLead->right;
+   116	        }
+   117	    }
+   118	    if ((newNode->node) < (trvPtrTail->node)) {
+   119	        trvPtrTail->left = newNode;
+   120	    } else if ((newNode->node) > (trvPtrTail->node)) {
+   121	        trvPtrTail->right = newNode;
+   122	    }
+   123	}
+   124	
+   125	void find(TREE_NODE *root, char finding) {
+   126	    while((root != NULL) && ((root->node) != finding)) {
+   127	        if (finding < (root->node)) {
+   128	            root = root->left;
+   129	        } else {
+   130	            root = root->right;
+   131	        }
+   132	    }
+   133	    if (root == NULL) {
+   134	        printf("\n  '%c' is not in the tree\n", finding);
+   135	    } else {
+   136	        printf("\n  Found the string '%s' there\n", root->data);
+   137	    }
+   138	}
+   139	
+   140	int main() {
+   141	    char userInput = 'a';
+   142	    char findInput;
+   143	    TREE_NODE *aNode = NULL;
+   144	    aNode = malloc(sizeof(TREE_NODE));
+   145	    aNode->left = NULL;
+   146	    aNode->right = NULL;
+   147	    printf("\nEnter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: ");
+   148	    scanf(" %c", &userInput);
+   149	    if ((userInput == 'i') || (userInput == 'I')) {
+   150	        printf("\nEnter new node's key value: ");
+   151	        scanf(" %c", &(aNode->node));
+   152	        printf("\nEnter string of up to 10 characters for '%c' data: ", aNode->node);
+   153	        scanf("%s", aNode->data);
+   154	        printf("\n  Pre-order traversal is: ");
+   155	        preOrderTraversal(aNode);
+   156	        printf("\n  Inorder traversal is: ");
+   157	        inOrderTraversal(aNode);
+   158	        printf("\n");
+   159	    }
+   160	    while (userInput != 'q') {
+   161	        printf("\nEnter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: ");
+   162	        scanf(" %c", &userInput);
+   163	        switch(userInput){
+   164	            case 'I':
+   165	            case 'i':
+   166	                insertionInTree(aNode);
+   167	                printf("  Pre-order traversal is: ");
+   168	                preOrderTraversal(aNode);
+   169	                printf("\n  Inorder traversal is: ");
+   170	                inOrderTraversal(aNode);
+   171	                printf("\n");
+   172	                break;
+   173	            case 'F':
+   174	            case 'f':
+   175	                printf("\nEnter the search key: ");
+   176	                scanf(" %c", &findInput);
+   177	                find(aNode, findInput);
+   178	        }
+   179	    }
+   180	    return 0;
+   181	} sh-4.2$ gcc Assignment03_NL.c
+sh-4.2$ a.out
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: I
+
+Enter new node's key value: m
+
+Enter string of up to 10 characters for 'm' data: mike
+
+  Pre-order traversal is: m
+  Inorder traversal is: m
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: d
+
+Enter string of up to 10 characters for 'd' data: delta
+
+  Pre-order traversal is: md
+  Inorder traversal is: dm
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: g
+
+Enter string of up to 10 characters for 'g' data: golf
+
+  Pre-order traversal is: mdg
+  Inorder traversal is: dgm
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: r
+
+Enter string of up to 10 characters for 'r' data: romeo
+
+  Pre-order traversal is: mdgr
+  Inorder traversal is: dgmr
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: p
+
+Enter string of up to 10 characters for 'p' data: papa
+
+  Pre-order traversal is: mdgrp
+  Inorder traversal is: dgmpr
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: b
+
+Enter string of up to 10 characters for 'b' data: bravo
+
+  Pre-order traversal is: mdbgrp
+  Inorder traversal is: bdgmpr
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: i
+
+Enter new node's key value: x
+
+Enter string of up to 10 characters for 'x' data: x-ray
+
+  Pre-order traversal is: mdbgrpx
+  Inorder traversal is: bdgmprx
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: F
+
+Enter the search key: m
+
+  Found the string 'mike' there
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: f
+
+Enter the search key: v
+
+  'v' is not in the tree
+
+Enter choice (lower case is also acceptable) --- (I)nsert, (F)ind, (Q)uit: q
+sh-4.2$ exit
+exit
+
+Script done on Sat 02 Nov 2019 10:18:37 AM MST

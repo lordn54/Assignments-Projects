@@ -1,0 +1,189 @@
+Script started on Tue 19 Nov 2019 10:45:48 PM MST
+[?1034hsh-4.2$ cat -n assignment04.c
+     1	/*
+     2	*  Name: Nicole Lord
+     3	*  Date: November 11, 2019
+     4	*  Assignment Name: Homework #04
+     5	*  File #06: assignment04.c
+     6	*/
+     7	
+     8	#include <stdio.h>
+     9	#include <stdlib.h>
+    10	
+    11	typedef struct tree_node {
+    12	    char node;
+    13	    int frequency;
+    14	    struct tree_node *left;
+    15	    struct tree_node *right;
+    16	}TREE_NODE;
+    17	
+    18	void insertion(char userInput, int i, TREE_NODE **arr) {
+    19	        int j;
+    20	        TREE_NODE *temp = NULL, *theNode;
+    21	        theNode = malloc(sizeof(TREE_NODE));
+    22	        theNode->node = userInput;
+    23	        printf("    Enter '%c's frequency: ", userInput);
+    24	        scanf("%d", &(theNode->frequency));
+    25	        arr[i] = theNode;
+    26	        j = i;
+    27	        while ((j > 1) && (arr[j/2]->frequency > arr[j]->frequency)){
+    28	            temp = arr[j/2];
+    29	            arr[j/2] = arr[j];
+    30	            arr[j] = temp;
+    31	            j /= 2;
+    32	        }  
+    33	}
+    34	
+    35	void removal(TREE_NODE **arr, int size) {
+    36	    int j = 1;
+    37	    TREE_NODE *temp = NULL;
+    38	    arr[1] = arr[size];
+    39	    arr[size] = NULL;
+    40	    if ((2*j < size) && (2*j + 1 < size)) {
+    41	        if ((arr[2*j]->frequency) < (arr[2*j + 1]->frequency)) {
+    42	            if ((arr[2*j]->frequency) < (arr[j]->frequency)) {
+    43	                temp = arr[2*j];
+    44	                arr[2*j] = arr[j];
+    45	                arr[j] = temp;
+    46	                j *= 2; 
+    47	            } 
+    48	        } else {
+    49	            if (arr[2*j + 1]->frequency < arr[j]->frequency) {
+    50	                temp = arr[2*j + 1];
+    51	                arr[2*j + 1] = arr[j];
+    52	                arr[j] = temp;
+    53	                j = 2*j + 1;
+    54	            } 
+    55	        }
+    56	    } else if (2*j < size) {
+    57	        if (arr[2*j]->frequency < arr[j]->frequency) {
+    58	            temp = arr[2*j];
+    59	            arr[2*j] = arr[j];
+    60	            arr[j] = temp;
+    61	            j *= 2;
+    62	        }
+    63	    }
+    64	}
+    65	
+    66	void preTraversalR(TREE_NODE *root) {
+    67	    printf("    %c         %d\n", (root->node), (root->frequency));
+    68	    if((root->left) != NULL) {
+    69	        preTraversalR(root->left);
+    70	    } 
+    71	    if ((root->right) != NULL) {
+    72	        preTraversalR(root->right);
+    73	    }
+    74	}
+    75	
+    76	void inTraversalR(TREE_NODE *root) {
+    77	    if((root->left) != NULL) {
+    78	        inTraversalR(root->left);
+    79	    } 
+    80	    printf("    %c         %d\n", (root->node), (root->frequency));
+    81	    if ((root->right) != NULL) {
+    82	        inTraversalR(root->right);
+    83	    }
+    84	}
+    85	
+    86	int main() {
+    87	    TREE_NODE *aNode = NULL, *newNode, *temp;
+    88	    TREE_NODE *arr[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+    89	    char userInput;
+    90	    int size = 0;
+    91	    int i = 1;
+    92	    int j;
+    93	    /*Insertion into the Heap*/
+    94	    while (userInput != '$') {
+    95	        printf("Enter a character (enter a '$' to quit entering characters): ");
+    96	        scanf(" %c", &userInput);
+    97	        if (userInput != '$') {
+    98	            if (aNode == NULL) {
+    99	                aNode = malloc(sizeof(TREE_NODE));
+   100	                aNode->node = userInput;
+   101	                printf("    Enter '%c's frequency: ", userInput);
+   102	                scanf("%d", &(aNode->frequency));
+   103	                arr[i] = aNode;
+   104	            } else {
+   105	                insertion(userInput, i, arr);
+   106	            }
+   107	            i++;
+   108	            size++;
+   109	        }
+   110	        printf("\n");
+   111	    }
+   112	    while ((arr[2] != NULL) && (size != 0)) {
+   113	        newNode = malloc(sizeof(TREE_NODE));
+   114	        newNode->node = '-';
+   115	        newNode->left = arr[1];
+   116	        removal(arr, size);
+   117	        size--;
+   118	        newNode->right = arr[1];
+   119	        removal(arr, size);
+   120	        arr[size] = newNode;
+   121	        newNode->frequency = (newNode->left->frequency) + (newNode->right->frequency);
+   122	        j = size;
+   123	        while ((j > 1) && (arr[j/2]->frequency > arr[j]->frequency)){
+   124	            temp = arr[j/2];
+   125	            arr[j/2] = arr[j];
+   126	            arr[j] = temp;
+   127	            j /= 2;
+   128	        } 
+   129	    }
+   130	    printf("The nodes of the Huffman tree in Pre-order are:\n\n");
+   131	    preTraversalR(newNode);
+   132	    printf("\n");
+   133	    printf("The nodes of the Huffman tree in In-order are:\n\n");
+   134	    inTraversalR(newNode);
+   135	}sh-4.2$ gcc assignment04.c
+sh-4.2$ a.out
+Enter a character (enter a '$' to quit entering characters): g
+    Enter 'g's frequency: 56
+
+Enter a character (enter a '$' to quit entering characters): b
+    Enter 'b's frequency: 15
+
+Enter a character (enter a '$' to quit entering characters): c
+    Enter 'c's frequency: 25
+
+Enter a character (enter a '$' to quit entering characters): k
+    Enter 'k's frequency: 5
+
+Enter a character (enter a '$' to quit entering characters): a
+    Enter 'a's frequency: 17
+
+Enter a character (enter a '$' to quit entering characters): d
+    Enter 'd's frequency: 18
+
+Enter a character (enter a '$' to quit entering characters): $
+
+The nodes of the Huffman tree in Pre-order are:
+
+    -         136
+    g         56
+    -         80
+    -         35
+    a         17
+    d         18
+    -         45
+    -         20
+    k         5
+    b         15
+    c         25
+
+The nodes of the Huffman tree in In-order are:
+
+    g         56
+    -         136
+    a         17
+    -         35
+    d         18
+    -         80
+    k         5
+    -         20
+    b         15
+    -         45
+    c         25
+sh-4.2$ exit
+exit
+
+Script done on Tue 19 Nov 2019 10:46:27 PM MST

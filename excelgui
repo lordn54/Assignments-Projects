@@ -1,0 +1,148 @@
+from tkinter import *
+import tkinter.font as font
+import os
+import xlsxwriter
+from openpyxl import Workbook, load_workbook
+
+# excel logo color = #02723B
+
+root = Tk()
+root.configure(bg='#02723B')
+
+myFont = font.Font(family="Times New Roman", size=15)
+myFont2 = font.Font(family="Times New Roman", size=12)
+
+
+def createFile():
+    createRoot = Tk()
+    createRoot.configure(bg='#02723B')
+
+    def creation():
+        user = nameEntry.get()
+        user2 = sheetEntry.get()
+        workbook = xlsxwriter.Workbook(user + ".xlsx")
+        sheet = workbook.add_worksheet(user2)
+        workbook.close()
+        label = Label(createRoot, text="Workbook " + user + ".xlsx and Sheet " + user2 + " has been created."
+                                                                                         " Close all windows to see.")
+        label['font'] = myFont2
+        label.grid(row=3, column=1)
+
+    name = Label(createRoot, text="Name of file: ", bg='#02723B', fg="white")
+    name['font'] = myFont
+    name.grid(row=0, column=0)
+
+    name_text = StringVar()
+    nameEntry = Entry(createRoot, textvariable=name_text)
+    nameEntry.grid(row=0, column=1)
+
+    sheet_label = Label(createRoot, text="Name of sheet: ", bg='#02723B', fg="white")
+    sheet_label['font'] = myFont
+    sheet_label.grid(row=1, column=0)
+
+    sheet_text = StringVar()
+    sheetEntry = Entry(createRoot, textvariable=sheet_text)
+    sheetEntry.grid(row=1, column=1)
+
+    createButton = Button(createRoot, text="Enter", command=creation, bg='#02723B', fg="white")
+    createButton['font'] = myFont
+    createButton.grid(row=2, column=1)
+
+    createRoot.mainloop()
+
+
+def appendFile():
+    appendRoot = Tk()
+    appendRoot.configure(bg='#02723B')
+
+    def append1():
+        user = workbook_nameEntry.get()
+        user2 = sheetEntry.get()
+        user3 = contentEntry.get()
+        workbook = load_workbook(user + ".xlsx")
+        sheet = workbook.worksheets[(int(user2)) - 1]
+        row = list(user3.split("/"))
+        for i in range(len(row)):
+            try:
+                row[i] = int(row[i])
+            except:
+                row[i] = row[i]
+        sheet.append(row)
+        workbook.save(user + ".xlsx")
+
+    workbook_name = Label(appendRoot, text="Name of the workbook: ", bg='#02723B', fg="white")
+    workbook_name['font'] = myFont
+    workbook_name.grid(row=0, column=0)
+
+    workbook_text = StringVar()
+    workbook_nameEntry = Entry(appendRoot, textvariable=workbook_text)
+    workbook_nameEntry.grid(row=0, column=1)
+
+    sheet_num = Label(appendRoot, text="Sheet number: ", bg='#02723B', fg="white")
+    sheet_num['font'] = myFont
+    sheet_num.grid(row=1, column=0)
+
+    sheet_text = StringVar()
+    sheetEntry = Entry(appendRoot, textvariable=sheet_text)
+    sheetEntry.grid(row=1, column=1)
+
+    content = Label(appendRoot, text="What's the content of the cell (leave a / for separate cells): ", bg='#02723B',
+                    fg="white")
+    content['font'] = myFont
+    content.grid(row=2, column=0)
+
+    content_text = StringVar()
+    contentEntry = Entry(appendRoot, textvariable=content_text)
+    contentEntry.grid(row=2, column=1)
+
+    createButton = Button(appendRoot, text="Enter", command=append1, bg='#02723B', fg="white")
+    createButton['font'] = myFont
+    createButton.grid(row=3, column=1)
+
+    appendRoot.mainloop()
+
+
+def openFile():
+    openRoot = Tk()
+    openRoot.configure(bg="#02723B")
+
+    def open1():
+        user = nameEntry.get()
+        os.startfile(user + ".xlsx")
+
+    name = Label(openRoot, text="Name of file: ", bg='#02723B', fg="white")
+    name['font'] = myFont
+    name.grid(row=0, column=0)
+
+    name_text = StringVar()
+    nameEntry = Entry(openRoot, textvariable=name_text)
+    nameEntry.grid(row=0, column=1)
+
+    openButton = Button(openRoot, text="Enter", command=open1, bg='#02723B', fg="white")
+    openButton['font'] = myFont
+    openButton.grid(row=2, column=1)
+
+    openRoot.mainloop()
+
+
+choice = Label(root, text="What would you", bg='#02723B', fg="white")
+choice['font'] = myFont
+choice.grid(row=0, column=0)
+
+choiceCont = Label(root, text="like to do?", bg='#02723B', fg="white")
+choiceCont['font'] = myFont
+choiceCont.grid(row=1, column=0)
+
+create = Button(root, text="Create a file", width=12, fg="white", bg="#02723B", command=createFile)
+create['font'] = myFont2
+create.grid(row=1, column=1)
+
+append = Button(root, text="Append to a file", width=12, fg="white", bg="#02723B", command=appendFile)
+append['font'] = myFont2
+append.grid(row=1, column=3)
+
+openFile = Button(root, text="Open a file", width=12, fg="white", bg="#02723B", command=openFile)
+openFile['font'] = myFont2
+openFile.grid(row=1, column=5)
+
+root.mainloop()
